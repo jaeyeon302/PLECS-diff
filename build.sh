@@ -6,6 +6,40 @@ OUTPUT_DIR="$SCRIPT_DIR/build_extension"
 PACKAGE_JSON="$SCRIPT_DIR/package.json"
 
 VERSION_OVERRIDE=""
+VSCE_URL_ARGS=()
+
+normalize_repo_url() {
+	local remote_url="$1"
+	# Convert SSH remote URL to HTTPS for VSCE flags.
+	if [[ "$remote_url" =~ ^git@github.com:(.+)$ ]]; then
+		remote_url="https://github.com/${BASH_REMATCH[1]}"
+	elif [[ "$remote_url" =~ ^git@gitlab.com:(.+)$ ]]; then
+		remote_url="https://gitlab.com/${BASH_REMATCH[1]}"
+	fi
+	remote_url="${remote_url%.git}"
+	echo "$remote_url"
+}
+
+build_vsce_url_args() {
+	local remote_url repo_url default_branch
+	remote_url="$(git -C "$SCRIPT_DIR" remote get-url origin 2>/dev/null || true)"
+	if [[ -z "$remote_url" ]]; then
+		return
+	fi
+
+	repo_url="$(normalize_repo_url "$remote_url")"
+	default_branch="$(git -C "$SCRIPT_DIR" remote show origin 2>/dev/null | sed -n '/HEAD branch/s/.*: //p' | head -1)"
+	if [[ -z "$default_branch" ]]; then
+		default_branch="main"
+	fi
+
+	if [[ "$repo_url" =~ ^https?:// ]]; then
+		VSCE_URL_ARGS=(
+			--baseContentUrl "$repo_url/blob/$default_branch"
+			--baseImagesUrl "$repo_url/blob/$default_branch"
+		)
+	fi
+}
 
 usage() {
 	echo "Usage: $0 [--version X.Y.Z]"
@@ -72,7 +106,8 @@ npm --prefix "$SCRIPT_DIR" run build -- --minify
 
 # Package as VSIX
 echo "Packaging VSIX..."
-npx @vscode/vsce package --allow-missing-repository --readme-path "README.md" --out "$OUTPUT_DIR/"
+build_vsce_url_args
+npx @vscode/vsce package --allow-missing-repository --readme-path "README.md" "${VSCE_URL_ARGS[@]}" --out "$OUTPUT_DIR/"
 
 VSIX_FILE=$(ls "$OUTPUT_DIR"/*.vsix 2>/dev/null | head -1)
 echo ""
