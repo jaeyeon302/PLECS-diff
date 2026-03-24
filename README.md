@@ -1,9 +1,9 @@
 
 # PLECS Diff Viewer
 
-Visual diff viewer for PLECS circuit files (`.plecs`) across Git commits inside VS Code.
-
 ![PLECS Diff Viewer Screenshot](assets/screenshot.png)
+
+Visual diff viewer for PLECS circuit files (`.plecs`) across Git commits inside VS Code.
 
 
 ## Features
