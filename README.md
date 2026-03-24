@@ -12,6 +12,18 @@ Visual diff viewer for PLECS circuit files (`.plecs`) across Git commits inside 
 - Open from status bar command (`PLECS Diff`) or from file context menu.
 - View circuit-level changes and navigate subsystem differences in the panel.
 
+## Visual Indicators
+
+The extension uses colors and line styles to indicate different types of changes:
+
+- **🟢 Green Solid**: Newly added component.
+- **🔴 Red Solid**: Removed component.
+- **🟡 Yellow/Khaki Solid**: Parameter changed inside a component (e.g., resistance, voltage) without component addition/removal.
+- **🟣 Purple Dashed**: Component position changed.
+  - **Ghost Component (Faded dashed)**: Represents the previous location of the moved component.
+  - **Position Change Line (Dashed)**: Shows the path between the old and new positions.
+- **🔘 Highlight Ring (Large yellow dashed circle)**: Focuses on the currently selected change from the left diff list.
+
 ## Requirements
 
 - VS Code `1.85.0` or newer
@@ -91,7 +103,9 @@ Install dependencies:
 npm install
 ```
 
-Build extension bundle:
+**Tip**: To test the extension directly in VS Code, simply press **`F5`**. This automatically runs the `npm: build` task and launches a new Extension Development Host window.
+
+Build extension bundle (manual):
 
 ```bash
 npm run build

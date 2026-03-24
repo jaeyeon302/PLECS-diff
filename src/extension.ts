@@ -25,15 +25,14 @@ function toGitPath(cwd: string, filePath: string): string {
 function runGit(cwd: string, args: string[]): Promise<string> {
   return new Promise((resolve, reject) => {
     const child = cp.spawn('git', args, { cwd });
-    let stdout = '';
+    const stdoutChunks: Buffer[] = [];
     let stderr = '';
     let stdoutBytes = 0;
     let killedForLargeStdout = false;
 
     child.stdout.on('data', chunk => {
-      const text = chunk.toString();
-      stdout += text;
-      stdoutBytes += Buffer.byteLength(text, 'utf8');
+      stdoutChunks.push(chunk);
+      stdoutBytes += chunk.length;
 
       // Keep memory usage bounded for very large git output.
       if (stdoutBytes > MAX_GIT_STDOUT_BYTES) {
@@ -57,6 +56,17 @@ function runGit(cwd: string, args: string[]): Promise<string> {
       }
 
       if (code === 0) {
+        const buffer = Buffer.concat(stdoutChunks);
+        let stdout = '';
+        
+        // 윈도우 환경 및 PLECS 특성상 UTF-16 LE 인코딩(BOM: FF FE) 대응
+        // Mac 환경에서는 UTF-8로 동작하므로 기본 폴백(Fallback) 유지
+        if (buffer.length >= 2 && buffer[0] === 0xff && buffer[1] === 0xfe) {
+          stdout = buffer.toString('utf16le');
+        } else {
+          stdout = buffer.toString('utf8');
+        }
+        
         resolve(stdout);
         return;
       }
