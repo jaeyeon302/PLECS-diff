@@ -1,0 +1,64 @@
+{
+  "name": "plecs-diff-viewer",
+  "displayName": "PLECS Diff Viewer",
+  "description": "Visual diff viewer for PLECS simulation circuit files across git commits",
+  "version": "0.1.0",
+  "publisher": "plecs-diff",
+  "engines": {
+    "vscode": "^1.85.0"
+  },
+  "categories": [
+    "Other"
+  ],
+  "activationEvents": [
+    "onLanguage:plecs",
+    "workspaceContains:**/*.plecs"
+  ],
+  "main": "./dist/extension.js",
+  "contributes": {
+    "commands": [
+      {
+        "command": "plecsDiff.compareCommits",
+        "title": "PLECS Diff: Compare File Between Commits"
+      }
+    ],
+    "menus": {
+      "explorer/context": [
+        {
+          "when": "resourceExtname == .plecs",
+          "command": "plecsDiff.compareCommits",
+          "group": "3_compare"
+        }
+      ],
+      "editor/title/context": [
+        {
+          "when": "resourceExtname == .plecs",
+          "command": "plecsDiff.compareCommits",
+          "group": "1_diff"
+        }
+      ]
+    },
+    "languages": [
+      {
+        "id": "plecs",
+        "extensions": [
+          ".plecs"
+        ],
+        "aliases": [
+          "PLECS"
+        ]
+      }
+    ]
+  },
+  "scripts": {
+    "build": "esbuild ./src/extension.ts --bundle --outfile=dist/extension.js --external:vscode --format=cjs --platform=node --sourcemap",
+    "watch": "npm run build -- --watch",
+    "package": "npm run build -- --minify"
+  },
+  "devDependencies": {
+    "@types/vscode": "^1.85.0",
+    "@types/node": "^20.0.0",
+    "esbuild": "^0.20.0",
+    "typescript": "^5.3.0"
+  }
+}
