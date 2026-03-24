@@ -12,6 +12,18 @@ Visual diff viewer for PLECS circuit files (`.plecs`) across Git commits inside 
 - Open from status bar command (`PLECS Diff`) or from file context menu.
 - View circuit-level changes and navigate subsystem differences in the panel.
 
+## Visual Indicators
+
+The extension uses colors and line styles to indicate different types of changes:
+
+- **🟢 Green Solid**: Newly added component.
+- **🔴 Red Solid**: Removed component.
+- **🟡 Yellow/Khaki Solid**: Parameter changed inside a component (e.g., resistance, voltage) without component addition/removal.
+- **🟣 Purple Dashed**: Component position changed.
+  - **Ghost Component (Faded dashed)**: Represents the previous location of the moved component.
+  - **Position Change Line (Dashed)**: Shows the path between the old and new positions.
+- **🔘 Highlight Ring (Large yellow dashed circle)**: Focuses on the currently selected change from the left diff list.
+
 ## Requirements
 
 - VS Code `1.85.0` or newer
@@ -21,20 +33,17 @@ Visual diff viewer for PLECS circuit files (`.plecs`) across Git commits inside 
 ## Install (Offline VSIX)
 
 Use this method when internet access is restricted or Marketplace install is unavailable.
+Pre-compiled binary can be downloaded in the `release` tab.
 
-1. Build the VSIX package:
+### 1. Install in VS Code UI using a pre-compiled bianary:
+ 1. Open Extensions view.
+ 2. Select the `...` menu.
+ 3. Choose `Install from VSIX...`.
+ 4. Select the VSIX file from `build_extension/`.
 
-```bash
-./build.sh
-```
+You can see the detailed step in this link: [https://developer.analog.com/docs/codefusion-studio/1.1.0/user-guide/installation/install-extensions/](https://developer.analog.com/docs/codefusion-studio/1.1.0/user-guide/installation/install-extensions/)
 
-Optional: set a temporary package version for that build only:
-
-```bash
-./build.sh --version 0.2.0
-```
-
-2. Install in VS Code using command line:
+### 2. Install in VS Code using command line and a pre-compiled bianary:
 
 ```bash
 code --install-extension build_extension/<generated-file>.vsix
@@ -46,12 +55,18 @@ Example:
 code --install-extension build_extension/plecs-diff-viewer-0.2.0.vsix
 ```
 
-3. Install in VS Code UI:
+### 3. Build the VSIX package:
 
-1. Open Extensions view.
-2. Select the `...` menu.
-3. Choose `Install from VSIX...`.
-4. Select the VSIX file from `build_extension/`.
+```bash
+./build.sh
+```
+
+Optional: set a temporary package version for that build only:
+
+```bash
+./build.sh --version 0.2.0
+```
+
 
 ## How To Use
 
@@ -88,7 +103,9 @@ Install dependencies:
 npm install
 ```
 
-Build extension bundle:
+**Tip**: To test the extension directly in VS Code, simply press **`F5`**. This automatically runs the `npm: build` task and launches a new Extension Development Host window.
+
+Build extension bundle (manual):
 
 ```bash
 npm run build
