@@ -72,7 +72,8 @@ npm --prefix "$SCRIPT_DIR" run build -- --minify
 
 # Package as VSIX
 echo "Packaging VSIX..."
-npx @vscode/vsce package --allow-missing-repository --readme-path "README.md" --out "$OUTPUT_DIR/"
+npx --yes @vscode/vsce package --allow-missing-repository --readme-path "README.md" --out "$OUTPUT_DIR/" --baseImagesUrl "https://github.com/jaeyeon302/PLECS-diff/raw/main/"
+
 
 VSIX_FILE=$(ls "$OUTPUT_DIR"/*.vsix 2>/dev/null | head -1)
 echo ""

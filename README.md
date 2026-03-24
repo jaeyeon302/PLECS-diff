@@ -57,14 +57,26 @@ code --install-extension build_extension/plecs-diff-viewer-0.2.0.vsix
 
 ### 3. Build the VSIX package:
 
+**Mac/Linux:**
 ```bash
 ./build.sh
 ```
 
+**Windows (PowerShell):**
+```powershell
+.\build.ps1
+```
+
 Optional: set a temporary package version for that build only:
 
+**Mac/Linux:**
 ```bash
 ./build.sh --version 0.2.0
+```
+
+**Windows:**
+```powershell
+.\build.ps1 -version 0.2.0
 ```
 
 
